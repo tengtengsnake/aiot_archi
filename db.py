@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 # Initialize the Flask App and Configure SQLAlchemy:
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = '<database_url>'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://tengtengsnake:1234@localhost:3306/water'
 db = SQLAlchemy(app) # 用SQLAlchemy類別來實例化db物件代表資料庫
 
 # Define the model through the python class
