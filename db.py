@@ -6,6 +6,18 @@ from flask_sqlalchemy import SQLAlchemy
 
 # Initialize the Flask App and Configure SQLAlchemy:
 app = Flask(__name__)
+
+@app.route('/receive_data') # Define the route
+def receive_data():
+    total_water = request.args.get('total_water')
+    flow_control = request.args.get('flow_control')
+
+    user = User(total_water = total_water, flow_control = flow_control)
+    db.session.add(user)
+    db.session.commit()
+
+    return "Data saved successfully"
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://tengtengsnake:1234@localhost:3306/water'
 db = SQLAlchemy(app) # 用SQLAlchemy類別來實例化db物件代表資料庫
 
@@ -38,3 +50,5 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.name
 
+if __name__ == "__main__":
+    app.run(host = "0.0.0.0", debug = True)
