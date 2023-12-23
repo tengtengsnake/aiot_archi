@@ -1,29 +1,51 @@
-import os
-from flask import Flask, request, render_template, redirect, url_for
+import requests as rq
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from get_water_price import get_water_price
+from sqlalchemy import create_engine, text
+from water_price import get_water_price
 
+
+db = SQLAlchemy() # It used to create an instance of the SQLAlchemy object. 
+
+user = 'tengsnake'
+pw = '1234'
+db = 'water'
 
 # Initialize the Flask App and Configure SQLAlchemy:
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Create an Engine object to connect to the database
+engine = create_engine("mariadb+mariadbconnector://{user}:{pw}@localhost:3306/{db}".format(user=user, pw=pw, db=db))
+
+
+
 @app.route('/receive_data', methods = ["GET","POST"]) # Define the route
 def receive_data():
-    total_water = request.args.get('total_water')
-    flow_control = request.args.get('flow_control')
+    id = rq.args.get('id')
+    water_flow_speed = rq.args.get('water_flow_speed')
 
-    user = User(total_water = total_water, flow_control = flow_control)
-    db.session.add(user) # 這行程式碼將 User 模型物件添加到資料庫交易中
-    db.session.commit() # 這行程式碼提交資料庫交易，並將 User 模型物件存到資料表中。
+    total_water = rq.args.get('total_water')
+    flow_control = rq.args.get('flow_control')
 
+    #user = User(total_water = total_water, flow_control = flow_control)
+    #db.session.add(user) # 這行程式碼將 User 模型物件添加到資料庫交易中
+    #db.session.commit() # 這行程式碼提交資料庫交易，並將 User 模型物件存到資料表中。
+    
+    sql_cmd = """
+        INSERT INTO Sensors (id, water_flow_speed, body_temp, real_temp, humidity, water_level_height, total_water_volume, time)
+        VALUES ()
+        """
+    compiled_sql_cmd = text(sql_cmd)
+
+    with engine.connect() as conn:
+        query_data = conn.execute(compiled_sql_cmd)
+    
     return "Data saved successfully" # show on the website
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://tengtengsnake:1234@localhost:3306/water'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app) # 用SQLAlchemy類別來實例化db物件代表資料庫
-# db.init_app(app) 
 
 class User(db.Model):
-    __tablename__ = "user" 
+    __tablename__ = "User" 
     id = db.Column(db.VARCHAR(32), primary_key=True) # flasksqlalchemy要求所有模型都要定義一個PK欄位
     total_water = db.Column(db.Float, nullable = False)
     flow_control = db.Column(db.Float, nullable = False)
@@ -53,4 +75,4 @@ class Sensors(db.Model):
     
 
 if __name__ == "__main__":
-    app.run(host = "0.0.0.0", debug = True)
+    app.run(host= "0.0.0.0", port = 5000, debug = True)
