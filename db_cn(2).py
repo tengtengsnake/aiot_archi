@@ -61,5 +61,37 @@ def insert_data_to_sensors():
         conn.commit()
     return "Insert Successful!"
 
+
+
+@app.route('/modify_data_to_sensors', methods = ["GET","POST"])
+def insert_data_to_sensors():
+    water_Flow_Speed = request.args.get('water_Flow_Speed')
+    airPressure = request.args.get('airPressure')
+    apparentTemp = request.args.get('apparentTemp')
+    realTemp = request.args.get('realTemp')
+    humidity = request.args.get('humidity')
+    waterLevel = request.args.get('waterLevel')
+    totalwater= request.args.get('totalwater')
+    time = request.args.get('time')
+
+    
+    # 如果我們要修改資料表中的資料我們就會需要用到 UPDATE。
+    sql_cmd = f"""
+    UPDATE Sensors
+    SET water_Flow_Speed = ?, airPressure = ?, apparentTemp = ?,
+        realTemp = ?, humidity = ?, waterLevel = ?, totalwater = ?, time = ?
+    WHERE sensor_id = ?"""
+
+    compiled_sql_cmd = text(sql_cmd)
+
+    with engine.connect() as conn:
+        insert_data = conn.execute(compiled_sql_cmd)
+        conn.commit()
+    return "Modify Successful!"
+
+
+
+
+
 if __name__ == "__main__":
     app.run(host= "0.0.0.0", port = 5000, debug = True)

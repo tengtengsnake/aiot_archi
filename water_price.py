@@ -2,9 +2,9 @@ import requests
 import csv
 from io import StringIO
 
-def get_water_price():
+def get_water_price(total_water_volume):
     # Get the input amount from the user and convert it to a float
-    input_amount = float(input("Please input how much water (ml) do you use: "))
+    #input_amount = float(input("Please input how much water (ml) do you use: "))
 
     csv_url = "https://www.water.gov.tw/opendata/prop8.csv"
 
@@ -30,6 +30,5 @@ def get_water_price():
         print(f"An error occurred: {e}")
 
     # Perform the calculation with the converted input_amount
-    return (input_amount * 0.001 * 0.001) * desired_element
+    return float(total_water_volume * 0.001 * 0.001) * desired_element
 
-    # print("Congrats! You have to pay {} NTD".format(result))  # Convert milliliters to liters and then calculate cost
