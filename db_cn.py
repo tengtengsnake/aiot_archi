@@ -3,6 +3,7 @@ from flask import Flask, request
 from sqlalchemy import create_engine, text
 from apparent_temp import apparent_temp
 from water_price import get_water_price
+from mac_gen_to_uuid import uuid_gen
 
 db = SQLAlchemy() # It used to create an instance of the SQLAlchemy object. 
 
@@ -36,7 +37,7 @@ def read_data_from_user():
         print(row,type(row))
     return f""" User ID, Total Water, Total Money, Flow Control  {row}"""
  
-@app.route('/insert_data_to_sensors', methods = ["GET","POST"])
+@app.route('/insert_data_from_sensors', methods = ["GET","POST"])
 def insert_data_to_sensors():
     water_Flow_Speed = request.args.get('water_Flow_Speed')
     airPressure = request.args.get('airPressure')
@@ -44,14 +45,15 @@ def insert_data_to_sensors():
     humidity = request.args.get('humidity')
     waterLevel = request.args.get('waterLevel')
     totalwater= request.args.get('totalwater')
-    time = request.args.get('time')
     
     apparent_of_temp = apparent_temp(realTemp, airPressure)
+  
+    uuid = uuid_gen()
 
-    #Total_money = get_water_price(total_water_volume)
+    # Total_money = get_water_price(total_water_volume)
     sql_cmd = f"""
-    INSERT INTO Sensors (`water_Flow_Speed`, airPressure, apparentTemp, realTemp, humidity, waterLevel, totalwater, time)
-    VALUES ({water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {time})
+    INSERT INTO Sensors
+    VALUES ("{uuid}", {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, CURRENT_TIMESTAMP)
     """
 
     compiled_sql_cmd = text(sql_cmd)

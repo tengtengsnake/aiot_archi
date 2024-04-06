@@ -17,27 +17,9 @@ def receive_data():
     return f"waterFlowspeed = {waterFlowSpeed}, airPressure = {airPressure},apparentTemp = {apparentTemp}, realTemp = {realTemp}, humidity = {humidity}, waterLevel = {waterLevel}, totalwater = {totalWater}, time = {time} "
 
 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     app.run(host= "0.0.0.0", port = 5000, debug = True)
 
 # curl -X GET http://localhost:5000/receive_data?name=John&age=30 
     
-    # connet to db and store them
