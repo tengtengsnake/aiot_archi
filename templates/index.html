@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fancy Login</title>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Lc007IpAAAAAKG6v0eFa2POcb6jKnIcy8Kr1ejr"></script> 
+    <script>
+        function onSubmit(token) {
+          document.getElementById("demo-form").submit();
+        }
+    </script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="logo">Water monitor interface</h1>
+    <form class="login-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" placeholder= "Enter your username" required> <br> <br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required style="width: 178px;">
+      <div class="checkbox-container">
+        <input type="checkbox" id="remember-me">
+        <label for="remember-me">Remember Me</label> <br> <br>
+      </div>
+      <!--<button >Login</button> <br> <br>-->
+      <a href="#">Forgot Password?</a>
+      <button type="submit" style="width: 275px; height: 50px;", class="g-recaptcha"
+        data-sitekey="6Lc007IpAAAAAKG6v0eFa2POcb6jKnIcy8Kr1ejr"
+        data-callback='onSubmit'
+        data-action='submit'>Login
+      </button>
+    </form>
+  </div>
+  <!--<script src="main.js"></script> -->
+</body>
+</html>
