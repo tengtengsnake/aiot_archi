@@ -27,6 +27,13 @@ engine = create_engine("mariadb+mariadbconnector://{user}:{pw}@localhost:3306/{d
 @app.route('/login')
 def login_interface():
     return render_template('index.html')
+
+# forget password  interface
+@app.route('/forget_passwd', methods=['GET', 'POST'])
+def forget_passwd():
+    if request.method == 'GET':
+        return render_template('forget_passwd.html')
+    
 # regiter interface
 @app.route('/register', methods=['GET', 'POST'])
 def register():
