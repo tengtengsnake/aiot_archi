@@ -204,13 +204,12 @@ def insert_data_from_sensors():
 
     Ultraviolet_intensity = request.form.get('Ultraviolet_intensity')
     LuminousIntensity = request.form.get('LuminousIntensity')
-    Atmospheric_pressure = request.form.get('Atmospheric_pressure')
     Altitud = request.form.get('Altitud')
     # the last column is time
 
     sql_cmd = f""" 
         INSERT INTO Sensors
-        VALUES ("{username}", {sensor_id}, {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {Ultraviolet_intensity}, {LuminousIntensity}, {Atmospheric_pressure},{Altitud}, CURRENT_TIMESTAMP)
+        VALUES ("{username}", {sensor_id}, {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {Ultraviolet_intensity}, {LuminousIntensity},{Altitud}, CURRENT_TIMESTAMP)
     """
 
     compiled_sql_cmd = text(sql_cmd)
