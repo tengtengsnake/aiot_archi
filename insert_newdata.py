@@ -5,7 +5,6 @@ from flask import Flask, request
 from sqlalchemy import create_engine, text
 from apparent_temp import apparent_temp
 from water_price import get_water_price
-from mac_gen_to_uuid import uuid_gen
 from interval import calculate_interval
 
 db = SQLAlchemy() # It used to create an instance of the SQLAlchemy object. 
@@ -25,16 +24,16 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 engine = create_engine("mariadb+mariadbconnector://{user}:{pw}@localhost:3306/{db}".format(user=user, pw=pw, db=db))
 
 # Add new row of data from sensors --> done
-@app.route('/insert_data_from_sensors', methods = ["GET","POST"])
+@app.route('/insert_data_from_sensors', methods = ["POST"])
 def insert_data_from_sensors():
-    username = request.args.get("username")
-    sensor_id = request.args.get('sensor_id')
-    water_Flow_Speed = request.args.get('water_Flow_Speed')
-    airPressure = request.args.get('airPressure')
-    realTemp = request.args.get('realTemp')
-    humidity = request.args.get('humidity')
-    waterLevel = request.args.get('waterLevel')
-    totalwater= request.args.get('totalwater')
+    username = request.form.get("username")
+    sensor_id = request.form.get('sensor_id')
+    water_Flow_Speed = request.form.get('water_Flow_Speed')
+    airPressure = request.form.get('airPressure')
+    realTemp = request.form.get('realTemp')
+    humidity = request.form.get('humidity')
+    waterLevel = request.form.get('waterLevel')
+    totalwater= request.form.get('totalwater')
     
     apparent_of_temp = apparent_temp(realTemp, airPressure)
 
