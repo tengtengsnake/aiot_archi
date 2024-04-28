@@ -9,9 +9,9 @@ form_data = {
     'username': 'lin',
     'sensor_id': '3',  # Replace with your actual sensor ID
     'water_Flow_Speed': 69.0,
-    'airPressure': 69.0,
-    'realTemp': 132.0,
-    'humidity': 35.0,
+    'airPressure': 6933.0,
+    'realTemp': 1322222.0,
+    'humidity': 30.0,
     'waterLevel': 233.0,
     'totalwater': 33.0,
     'Ultraviolet_intensity': 0.23, 
