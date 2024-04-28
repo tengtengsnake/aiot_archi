@@ -56,7 +56,7 @@ def register():
         # After get the register info, insert datas into database 
         sql_cmd = f"""
         INSERT INTO Register
-        VALUES ("{username}", "{email}", {password}, CURRENT_TIMESTAMP)
+        VALUES ("{username}", "{email}", "{password}", CURRENT_TIMESTAMP)
         """
 
         compiled_sql_cmd = text(sql_cmd)
