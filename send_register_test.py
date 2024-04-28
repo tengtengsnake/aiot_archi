@@ -6,7 +6,7 @@ request_headers = {
                  '(KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'
 }
 form_data = {
-    'username':'bigasss',
+    'username':'bigass22222s',
     'email':'lingmail.com',
     'password':'123455',
 }
