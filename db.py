@@ -188,7 +188,7 @@ def read_data_from_db():
     except Exception as e:
         print(f"Error retrieving data: {e}")
 
-# Add first row of data from sensors with specific username --> done
+# Add new row of data from sensors --> done
 @app.route('/insert_data_from_sensors', methods = ["POST"])
 def insert_data_from_sensors():
     username = request.form.get("username")
@@ -198,13 +198,19 @@ def insert_data_from_sensors():
     realTemp = request.form.get('realTemp')
     humidity = request.form.get('humidity')
     waterLevel = request.form.get('waterLevel')
-    totalwater= request.form.get('totalwater')
-    
+    totalwater = request.form.get('totalwater')
+
     apparent_of_temp = apparent_temp(realTemp, airPressure)
+
+    Ultraviolet_intensity = request.form.get('Ultraviolet_intensity')
+    LuminousIntensity = request.form.get('LuminousIntensity')
+    Atmospheric_pressure = request.form.get('Atmospheric_pressure')
+    Altitud = request.form.get('Altitud')
+    # the last column is time
 
     sql_cmd = f""" 
         INSERT INTO Sensors
-        VALUES ("{username}", {sensor_id}, {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, CURRENT_TIMESTAMP)
+        VALUES ("{username}", {sensor_id}, {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {Ultraviolet_intensity}, {LuminousIntensity}, {Atmospheric_pressure},{Altitud} CURRENT_TIMESTAMP)
     """
 
     compiled_sql_cmd = text(sql_cmd)
@@ -222,7 +228,5 @@ def insert_data_from_sensors():
     insert_data_successful_message_json_string = json.dumps(insert_data_successful_message, indent=4)
     
     return insert_data_successful_message_json_string 
-  
-
 if __name__ == "__main__":
     app.run(host= "0.0.0.0", port = 5000, debug = True)

@@ -6,7 +6,7 @@ request_headers = {
                  '(KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'
 }
 form_data = {
-    'username': 'bigasss',
+    'username': 'your_username',
     'sensor_id': 'your_sensor_id',  # Replace with your actual sensor ID
     'water_Flow_Speed': 69.0,
     'airPressure': 69.0,
@@ -14,7 +14,11 @@ form_data = {
     'realTemp': 132.0,
     'humidity': 35.0,
     'waterLevel': 233.0,
-    'totalwater': 33.0
+    'totalwater': 33.0,
+    'Ultraviolet intensity': 0.23, 
+    'LuminousIntensity': 10.03, 
+    'Atmospheric pressure': 994,
+    'Altitude': 176.02 
 }
 
 r = requests.post(url, headers=request_headers, data=form_data)
