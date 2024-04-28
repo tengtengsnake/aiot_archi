@@ -210,7 +210,7 @@ def insert_data_from_sensors():
 
     sql_cmd = f""" 
         INSERT INTO Sensors
-        VALUES ("{username}", {sensor_id}, {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {Ultraviolet_intensity}, {LuminousIntensity}, {Atmospheric_pressure},{Altitud} CURRENT_TIMESTAMP)
+        VALUES ("{username}", {sensor_id}, {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {Ultraviolet_intensity}, {LuminousIntensity}, {Atmospheric_pressure},{Altitud}, CURRENT_TIMESTAMP)
     """
 
     compiled_sql_cmd = text(sql_cmd)

@@ -15,9 +15,9 @@ form_data = {
     'humidity': 35.0,
     'waterLevel': 233.0,
     'totalwater': 33.0,
-    'Ultraviolet intensity': 0.23, 
+    'Ultraviolet_intensity': 0.23, 
     'LuminousIntensity': 10.03, 
-    'Atmospheric pressure': 994,
+    'Atmospheric_pressure': 994,
     'Altitude': 176.02 
 }
 
