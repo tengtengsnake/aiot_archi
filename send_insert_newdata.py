@@ -6,11 +6,10 @@ request_headers = {
                  '(KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'
 }
 form_data = {
-    'username': 'your_username',
-    'sensor_id': 'your_sensor_id',  # Replace with your actual sensor ID
+    'username': 'lin',
+    'sensor_id': '3',  # Replace with your actual sensor ID
     'water_Flow_Speed': 69.0,
     'airPressure': 69.0,
-    'apparentTemp': 148.38,
     'realTemp': 132.0,
     'humidity': 35.0,
     'waterLevel': 233.0,

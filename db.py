@@ -227,5 +227,6 @@ def insert_data_from_sensors():
     insert_data_successful_message_json_string = json.dumps(insert_data_successful_message, indent=4)
     
     return insert_data_successful_message_json_string 
+
 if __name__ == "__main__":
     app.run(host= "0.0.0.0", port = 5000, debug = True)
