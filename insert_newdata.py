@@ -60,5 +60,5 @@ def insert_data_from_sensors():
 
 if __name__ == "__main__":
     app.run(host= "0.0.0.0", port = 5000, debug = True)
-# test data
+# test data get method
 # http://163.13.127.50:5000/insert_data_from_sensors?username=lin&sensor_id=1&water_Flow_Speed=69&airPressure=69&apparentTemp=233&realTemp=132&humidity=35&waterLevel=233&totalwater=33
