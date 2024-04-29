@@ -191,6 +191,7 @@ def read_data_from_db():
 # Add new row of data from sensors --> done
 @app.route('/insert_data_from_sensors', methods = ["POST"])
 def insert_data_from_sensors():
+    
     username = request.form.get("username")
     sensor_id = request.form.get('sensor_id')
     water_Flow_Speed = request.form.get('water_Flow_Speed')
@@ -198,7 +199,8 @@ def insert_data_from_sensors():
     realTemp = request.form.get('realTemp')
     humidity = request.form.get('humidity')
     waterLevel = request.form.get('waterLevel')
-    totalwater = request.form.get('totalwater')
+    # totalwater = request.form.get('totalwater')
+    totalwater = 0
 
     apparent_of_temp = apparent_temp(realTemp, airPressure)
 
