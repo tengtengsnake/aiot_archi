@@ -18,4 +18,4 @@ if start_time > datetime.strptime(end_time, desired_format):
     raise ValueError("Start time cannot be later than end time.")
 else:
     time_delta = (datetime.strptime(end_time, desired_format) - start_time).total_seconds()
-    print(time_delta,type(time_delta))
+    print(time_delta,type(time_delta)) # calculate the time interval between the start time and end time and print the reuslt in seconds

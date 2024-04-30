@@ -155,9 +155,12 @@ def read_data_from_db():
             humidity = row[6]  # 35.0
             waterLevel = row[7]  # 233.0
             totalwater = row[8]  # 33.0 (assuming 'totalwater' is a separate value)
+            Ultraviolet_intensity = row[9]
+            LuminousIntensity = row[10]
+            Altitude= row[11]
             desired_format = "%Y-%m-%d %H:%M:%S"
-            time_value = row[9].strftime(desired_format)
-            
+            time_value = row[12].strftime(desired_format)
+
             data_dict = {
                 "sensord_id": sensor_id,
                 "water_Flow_Speed": water_Flow_Speed,
@@ -167,6 +170,9 @@ def read_data_from_db():
                 "humidity": humidity,
                 "waterLevel": waterLevel,
                 "totalwater": totalwater,
+                "Ultraviolet_intensity": Ultraviolet_intensity,
+                "LuminousIntensity": LuminousIntensity,
+                "Altitude0": Altitude,
                 "time": time_value
             }
             
@@ -199,7 +205,7 @@ def insert_data_from_sensors():
     realTemp = request.form.get('realTemp')
     humidity = request.form.get('humidity')
     waterLevel = request.form.get('waterLevel')
-    # totalwater = request.form.get('totalwater')
+    # initial value for totalater
     totalwater = 0
 
     apparent_of_temp = apparent_temp(realTemp, airPressure)
