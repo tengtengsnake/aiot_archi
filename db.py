@@ -328,7 +328,7 @@ def read_all_data_from_db():
                 "totalwater": totalwater,
                 "Ultraviolet_intensity": Ultraviolet_intensity,
                 "LuminousIntensity": LuminousIntensity,
-                "Altitude0": Altitude,
+                "Altitude": Altitude,
                 "time": time_value
             }
             data_list.append(data_dict.copy())
