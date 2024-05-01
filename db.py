@@ -287,9 +287,9 @@ def insert_data_from_sensors():
             return insert_data_successful_message_json_string
 
 # get all the data with specific user
-@app.route('/read_all_data_from_db', methods=['GET', 'POST'])
-def read_data_from_db():
-    username = request.args.get('username')
+@app.route('/read_all_data_from_db', methods=['POST'])
+def read_all_data_from_db():
+    username = request.form.get('username')
 
     sql_cmd = f"""
     SELECT * FROM Sensors JOIN ( SELECT username as u, sensor_id as s, max(time) as t FROM Sensors GROUP BY username, sensor_id ) AS M ON Sensors.username = M.u AND Sensors.sensor_id = M.s AND Sensors.time = M.t WHERE Sensors.username = "{username}" GROUP BY Sensors.username, Sensors.sensor_id
