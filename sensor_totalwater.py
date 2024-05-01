@@ -4,7 +4,6 @@ from flask import Flask, request
 from sqlalchemy import create_engine, text
 from apparent_temp import apparent_temp
 from water_price import get_water_price
-from interval import calculate_interval
 from datetime import datetime
 
 db = SQLAlchemy() # It used to create an instance of the SQLAlchemy object. 
@@ -24,18 +23,16 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 engine = create_engine("mariadb+mariadbconnector://{user}:{pw}@localhost:3306/{db}".format(user=user, pw=pw, db=db))
 
 username = 'min20120907'
-
+sensor_id = 'sensor1'
 # make sure the sensor_id has been registered
 sql_cmd = f"""
-        SELECT * FROM Sensors WHERE username = "{username}" ORDER BY time DESC LIMIT 1
+        SELECT * FROM Sensors WHERE username = "{username}" AND sensor_id = "{sensor_id}" ORDER BY time DESC LIMIT 1
         """
 compiled_sql_cmd = text(sql_cmd)
 with engine.connect() as conn:
     row = conn.execute(compiled_sql_cmd).fetchone()
-    
-
-
-
+    print(row[12],type(row[12]))
+# if sensor_id has been registered, then calculate the time to get the accumulate water amount, else insert a new row of data
 
 sql_cmd = f"""
         SELECT * FROM Sensors WHERE username = "{username}" ORDER BY time DESC LIMIT 1
@@ -57,5 +54,5 @@ current_time = current_time.strftime(desired_format) # str
 if row[12] > datetime.strptime(current_time, desired_format):
     raise ValueError("Last time cannot be later than end time.")
 else:
-    time_delta = (datetime.strptime(current_time, desired_format) - row[12]).total_seconds()
+    time_delta = (datetime.strptime(current_time, desired_format) - row[12]).total_seconds() / 60 # seconds convert to min
     print(time_delta)

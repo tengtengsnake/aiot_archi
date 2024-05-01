@@ -1,11 +1,10 @@
 import json
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request 
-# from flask import render_template
 from sqlalchemy import create_engine, text
 from apparent_temp import apparent_temp
 from water_price import get_water_price
-from interval import calculate_interval
+from datetime import datetime
 
 db = SQLAlchemy() # It used to create an instance of the SQLAlchemy object. 
 
@@ -16,8 +15,6 @@ db = 'water'
 # Initialize the Flask App and Configure SQLAlchemy:
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#app.config['SQLALCHEMY_DATABASE_URI'] = f'mariadb+pymysql://{user}:{pw}@localhost:3306/{db}'.format(user=user, pw=pw, db=db)
-# 連線參數設定： 'SQLALCHEMY_DATABASE_URI' 為與資料庫連線的參數設定，其中 user_name、password 和 IP 請填入自己 Mysql 的資料，而 db_name 則是填入的 database 名稱。
 # db.init_app(app)
 
 # Create an Engine object to connect to the database
@@ -75,11 +72,11 @@ def register():
         return register_successful_message_json_string # return json format's insert successful info
     
 # login --> done
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET'])
 def login():
     try:
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.args.get('username')
+        password = request.args.get('password')
 
         # Compare with user's input and db's data 
         # When login successful, return the latest data of specific username
@@ -144,17 +141,17 @@ def read_data_from_db():
         with engine.connect() as conn:
             # Execute the SELECT statement and fetch the first row
             row = conn.execute(compiled_sql_cmd).fetchone()
-        print(row) # (33.0, datetime.datetime(2024, 4, 5, 18, 40, 12)) <class 'sqlalchemy.engine.row.Row'>
+        # print(row) # (33.0, datetime.datetime(2024, 4, 5, 18, 40, 12)) <class 'sqlalchemy.engine.row.Row'>
         if row:
             # Assuming the order of variables matches the order of data in the row
             sensor_id = row[1]
-            water_Flow_Speed = row[2]  # 69.0 (assuming row is a tuple or list)
-            airPressure = row[3]  # 69.0
-            apparentTemp = row[4]  # 148.38
-            realTemp = row[5]  # 132.0
-            humidity = row[6]  # 35.0
-            waterLevel = row[7]  # 233.0
-            totalwater = row[8]  # 33.0 (assuming 'totalwater' is a separate value)
+            water_Flow_Speed = row[2]  
+            airPressure = row[3]  
+            apparentTemp = row[4]  
+            realTemp = row[5]  
+            humidity = row[6]  
+            waterLevel = row[7]  
+            totalwater = row[8] 
             Ultraviolet_intensity = row[9]
             LuminousIntensity = row[10]
             Altitude= row[11]
@@ -197,7 +194,6 @@ def read_data_from_db():
 # Add new row of data from sensors --> done
 @app.route('/insert_data_from_sensors', methods = ["POST"])
 def insert_data_from_sensors():
-    
     username = request.form.get("username")
     sensor_id = request.form.get('sensor_id')
     water_Flow_Speed = request.form.get('water_Flow_Speed')
@@ -205,8 +201,6 @@ def insert_data_from_sensors():
     realTemp = request.form.get('realTemp')
     humidity = request.form.get('humidity')
     waterLevel = request.form.get('waterLevel')
-    # initial value for totalater
-    totalwater = 0
 
     apparent_of_temp = apparent_temp(realTemp, airPressure)
 
@@ -215,26 +209,82 @@ def insert_data_from_sensors():
     Altitude = request.form.get('Altitude')
     # the last column is time
 
-    sql_cmd = f""" 
-        INSERT INTO Sensors
-        VALUES ("{username}", "{sensor_id}", {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {Ultraviolet_intensity}, {LuminousIntensity},{Altitude}, CURRENT_TIMESTAMP)
-    """
-
+    # make sure the sensor_id has been registered
+    sql_cmd = f"""
+            SELECT * FROM Sensors WHERE username = "{username}" AND sensor_id = "{sensor_id}" ORDER BY time DESC LIMIT 1
+            """
+    
     compiled_sql_cmd = text(sql_cmd)
-
     with engine.connect() as conn:
-        conn.execute(compiled_sql_cmd)
-        conn.commit()
+        row = conn.execute(compiled_sql_cmd).fetchone()
 
-    insert_data_successful_message = {
-    'status': 'success',
-    'code': 200,
-    'message': 'Insert new data successful'
-    }
-    
-    insert_data_successful_message_json_string = json.dumps(insert_data_successful_message, indent=4)
-    
-    return insert_data_successful_message_json_string 
+    # if sensor_id has not been registered, then  insert new row of data with default watervalue
+    if not row: 
+        # initial value for totalater
+        totalwater = 0
 
+        sql_cmd = f""" 
+            INSERT INTO Sensors
+            VALUES ("{username}", "{sensor_id}", {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {Ultraviolet_intensity}, {LuminousIntensity},{Altitude}, CURRENT_TIMESTAMP)
+        """
+
+        compiled_sql_cmd = text(sql_cmd)
+
+        with engine.connect() as conn:
+            conn.execute(compiled_sql_cmd)
+            conn.commit()
+
+        insert_data_successful_message = {
+        'status': 'success',
+        'code': 200,
+        'message': 'Insert new data successful'
+        }
+        
+        insert_data_successful_message_json_string = json.dumps(insert_data_successful_message, indent=4)
+        
+        return insert_data_successful_message_json_string 
+    else:
+        sql_cmd = f"""
+        SELECT * FROM Sensors WHERE username = "{username}" ORDER BY time DESC LIMIT 1
+        """
+        compiled_sql_cmd = text(sql_cmd)
+        with engine.connect() as conn:
+            row = conn.execute(compiled_sql_cmd).fetchone()
+
+        desired_format = "%Y-%m-%d %H:%M:%S"
+
+        # Get current time
+        current_time = datetime.now()   # datetime
+
+        # Convert current time to desired format (same as start_time)
+        current_time = current_time.strftime(desired_format) # str
+
+        # Validate that start time is not later than end time
+        if row[12] > datetime.strptime(current_time, desired_format):
+            raise ValueError("Last time cannot be later than end time.")
+        else:
+            time_delta = (datetime.strptime(current_time, desired_format) - row[12]).total_seconds() / 60 # seconds convert to min
+            totalwater = float(time_delta) * float(water_Flow_Speed) + row[8] # last row of data with totalwater
+            sql_cmd = f""" 
+                INSERT INTO Sensors
+                VALUES ("{username}", "{sensor_id}", {water_Flow_Speed}, {airPressure}, {apparent_of_temp}, {realTemp}, {humidity}, {waterLevel}, {totalwater}, {Ultraviolet_intensity}, {LuminousIntensity},{Altitude}, CURRENT_TIMESTAMP)
+            """
+
+            compiled_sql_cmd = text(sql_cmd)
+
+            with engine.connect() as conn:
+                conn.execute(compiled_sql_cmd)
+                conn.commit()
+
+            insert_data_successful_message = {
+            'status': 'success',
+            'code': 200,
+            'message': 'Insert new data successful'
+            }
+            
+            insert_data_successful_message_json_string = json.dumps(insert_data_successful_message, indent=4)
+            
+            return insert_data_successful_message_json_string
+        
 if __name__ == "__main__":
     app.run(host= "0.0.0.0", port = 5000, debug = True)

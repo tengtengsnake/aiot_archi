@@ -23,57 +23,62 @@ def read_data_from_db():
     username = request.args.get('username')
 
     sql_cmd = f"""
-        SELECT *
-        FROM Sensors
-        WHERE username = "{username}"
-        ORDER BY time DESC
-        
+    SELECT * FROM Sensors JOIN ( SELECT username as u, sensor_id as s, max(time) as t FROM Sensors GROUP BY username, sensor_id ) AS M ON Sensors.username = M.u AND Sensors.sensor_id = M.s AND Sensors.time = M.t WHERE Sensors.username = "{username}" GROUP BY Sensors.username, Sensors.sensor_id 
     """
 
     compiled_sql_cmd = text(sql_cmd)
 
+    data_list = []
     try:
         with engine.connect() as conn:
             # Execute the SELECT statement and fetch all rows
             rows = conn.execute(compiled_sql_cmd).fetchall()
-            if rows:
-                data_list = []  # Create an empty list to store data dictionaries
+            for row in rows:  # single row for data
+                sensor_id = row[1]
+                water_Flow_Speed = row[2]
+                airPressure = row[3]
+                apparentTemp = row[4]
+                realTemp = row[5]
+                humidity = row[6]
+                waterLevel = row[7]
+                totalwater = row[8]
+                Ultraviolet_intensity = row[9]
+                LuminousIntensity = row[10]
+                Altitude = row[11]
+                desired_format = "%Y-%m-%d %H:%M:%S"
+                time_value = row[12].strftime(desired_format)
 
-                # Process each row
-                for row in rows:
-                    sensor_id = row[1]
-                    water_Flow_Speed = row[2]  # 69.0 (assuming row is a tuple or list)
-                    airPressure = row[3]  # 69.0
-                    apparentTemp = row[4]  # 148.38
-                    realTemp = row[5]  # 132.0
-                    humidity = row[6]  # 35.0
-                    waterLevel = row[7]  # 233.0
-                    totalwater = row[8]  # 33.0 (assuming 'totalwater' is a separate value)
-                    desired_format = "%Y-%m-%d %H:%M:%S"
-                    time_value = row[9].strftime(desired_format)
+                data_dict = {
+                    "sensord_id": sensor_id,
+                    "water_Flow_Speed": water_Flow_Speed,
+                    "airPressure": airPressure,
+                    "apparentTemp": apparentTemp,
+                    "realTemp": realTemp,
+                    "humidity": humidity,
+                    "waterLevel": waterLevel,
+                    "totalwater": totalwater,
+                    "Ultraviolet_intensity": Ultraviolet_intensity,
+                    "LuminousIntensity": LuminousIntensity,
+                    "Altitude0": Altitude,
+                    "time": time_value
+                }
+                data_list.append(data_dict.copy())
 
-                    data_dict = {
-                        "sensor_id": sensor_id,
-                        "water_Flow_Speed": water_Flow_Speed,
-                        "airPressure": airPressure,
-                        "apparentTemp": apparentTemp,
-                        "realTemp": realTemp,
-                        "humidity": humidity,
-                        "waterLevel": waterLevel,
-                        "totalwater": totalwater,
-                        "time": time_value
-                    }
+            result = []
+            result.append(data_list)
+            result = json.dumps({'result':result})
 
-                    data_list.append(data_dict)  # Append the data dictionary to the list
+        return result
+    except:
+        error_message = {
+            'status': 'error',
+            'code': 400,
+            'message': 'Bad Request: error occur'
+        }
 
-                data_list_json_string = json.dumps(data_list, indent=4)
-                return data_list_json_string  # Return the JSON string
+        error_message_json_string = json.dumps(error_message, indent=4)
 
-            else:
-                print(f"No data found for username: {username}")
-
-    except Exception as e:
-        print(f"Error retrieving data: {e}")
+        return error_message_json_string
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
