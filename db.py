@@ -202,7 +202,7 @@ def insert_data_from_sensors():
     humidity = request.form.get('humidity')
     waterLevel = request.form.get('waterLevel')
 
-    apparent_of_temp = apparent_temp(realTemp, airPressure)
+    apparent_of_temp = apparent_temp(realTemp, airPressure) / 10
 
     Ultraviolet_intensity = request.form.get('Ultraviolet_intensity')
     LuminousIntensity = request.form.get('LuminousIntensity')

@@ -18,8 +18,9 @@ engine = create_engine("mariadb+mariadbconnector://{user}:{pw}@localhost:3306/{d
 # read the latest data from database with specific username --> done
 @app.route('/read_all_data_from_db', methods=['POST'])
 def read_data_from_db():
-    username = request.form.get('username')
-
+    data = request.get_json()
+    username = data.get('username')
+    print(username)
     sql_cmd = f"""
     SELECT * FROM Sensors JOIN ( SELECT username as u, sensor_id as s, max(time) as t FROM Sensors GROUP BY username, sensor_id ) AS M ON Sensors.username = M.u AND Sensors.sensor_id = M.s AND Sensors.time = M.t WHERE Sensors.username = "{username}" GROUP BY Sensors.username, Sensors.sensor_id
     """
@@ -47,7 +48,7 @@ def read_data_from_db():
             time_value = row[12].strftime(desired_format)
 
             data_dict = {
-                "sensord_id": sensor_id,
+                "sensor_id": sensor_id,
                 "water_Flow_Speed": water_Flow_Speed,
                 "airPressure": airPressure,
                 "apparentTemp": apparentTemp,
@@ -67,7 +68,7 @@ def read_data_from_db():
     return {'result':data_list}
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)
 
 # http://163.13.127.50:5000/read_all_data_from_db?username=lin
 
