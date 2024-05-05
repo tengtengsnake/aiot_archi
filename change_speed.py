@@ -21,18 +21,20 @@ engine = create_engine("mariadb+mariadbconnector://{user}:{pw}@localhost:3306/{d
 # change the water speed
 @app.route('/change_speed', methods = ["POST"])
 def change_speed():
-    username = request.form.get("username")
-    waterspeed = request.form.get('waterspeed')
+    data = request.get_json()
+    username = data.get('username')
+    waterspeed = data.get('waterspeed')
     # if user does not exist, insert a new row of data with username, waterseed
     sql_cmd = f"""
-            SELECT * FROM Sensors WHERE username = "{username} ORDER BY time DESC LIMIT 1"
+            SELECT username FROM WaterSpeed WHERE username = "{username}" ORDER BY time DESC LIMIT 1
             """
     compiled_sql_cmd = text(sql_cmd)
     with engine.connect() as conn:
-        row = conn.execute(compiled_sql_cmd).fetchone()
-    if row:    # if username is already exist, update the waterspeed value
+        row = conn.execute(compiled_sql_cmd).fetchall()
+    print(row)
+    if row[0] == username:    # if username is already exist, update the waterspeed value
         sql_cmd = f"""
-            UPDATE Waterspeed
+            UPDATE WaterSpeed
                 SET waterspeed={waterspeed}
             WHERE username="{username}"
             """
@@ -43,8 +45,8 @@ def change_speed():
     else:
         # insert the new row of data
         sql_cmd = f""" 
-                INSERT INTO Waterspeed
-                VALUES ("{username}", "{waterspeed}", CURRENT_TIMESTAMP)
+                INSERT INTO WaterSpeed
+                VALUES ("{username}", {waterspeed}, CURRENT_TIMESTAMP)
             """        
 
         compiled_sql_cmd = text(sql_cmd)
