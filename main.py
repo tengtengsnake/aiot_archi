@@ -348,7 +348,9 @@ def change_speed():
 # get all the data with specific user
 @app.route('/read_all_data_from_db', methods=['POST'])
 def read_all_data_from_db():
-    username = request.form.get('username')
+
+    data = request.get_json()
+    username = data.get('username')
 
     sql_cmd = f"""
     SELECT * FROM Sensors JOIN ( SELECT username as u, sensor_id as s, max(time) as t FROM Sensors GROUP BY username, sensor_id ) AS M ON Sensors.username = M.u AND Sensors.sensor_id = M.s AND Sensors.time = M.t WHERE Sensors.username = "{username}" GROUP BY Sensors.username, Sensors.sensor_id
@@ -361,6 +363,7 @@ def read_all_data_from_db():
     with engine.connect() as conn:
         # Execute the SELECT statement and fetch all rows
         rows = conn.execute(compiled_sql_cmd).fetchall()
+
         for row in rows:  # single row for data
             sensor_id = row[1]
             water_Flow_Speed = row[2]
@@ -377,7 +380,7 @@ def read_all_data_from_db():
             time_value = row[12].strftime(desired_format)
 
             data_dict = {
-                "sensord_id": sensor_id,
+                "sensor_id": sensor_id,
                 "water_Flow_Speed": water_Flow_Speed,
                 "airPressure": airPressure,
                 "apparentTemp": apparentTemp,
