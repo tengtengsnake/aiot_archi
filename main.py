@@ -348,6 +348,7 @@ def change_speed():
 # get all the data with specific user
 @app.route('/read_all_data_from_db', methods=['POST'])
 def read_all_data_from_db():
+
     data = request.get_json()
     username = data.get('username')
 
@@ -356,13 +357,13 @@ def read_all_data_from_db():
     """
 
     compiled_sql_cmd = text(sql_cmd)
-    # print(sql_cmd)
+
     data_list = []
     
     with engine.connect() as conn:
         # Execute the SELECT statement and fetch all rows
         rows = conn.execute(compiled_sql_cmd).fetchall()
-        
+
         for row in rows:  # single row for data
             sensor_id = row[1]
             water_Flow_Speed = row[2]
