@@ -379,7 +379,7 @@ def read_all_data_from_db():
             time_value = row[12].strftime(desired_format)
 
             data_dict = {
-                "sensord_id": sensor_id,
+                "sensor_id": sensor_id,
                 "water_Flow_Speed": water_Flow_Speed,
                 "airPressure": airPressure,
                 "apparentTemp": apparentTemp,
