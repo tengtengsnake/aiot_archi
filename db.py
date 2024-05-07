@@ -285,6 +285,65 @@ def insert_data_from_sensors():
             insert_data_successful_message_json_string = json.dumps(insert_data_successful_message, indent=4)
             
             return insert_data_successful_message_json_string
+        
+# change the water speed
+@app.route('/change_speed', methods = ["POST"])
+def change_speed():
+    data = request.get_json()
+    username = data.get('username')
+    waterspeed = data.get('waterspeed')
+    # if user does not exist, insert a new row of data with username, waterseed
+    sql_cmd = f"""
+            SELECT username FROM WaterSpeed WHERE username = "{username}" ORDER BY time DESC LIMIT 1
+            """
+    compiled_sql_cmd = text(sql_cmd)
+    with engine.connect() as conn:
+        row = conn.execute(compiled_sql_cmd).fetchall()
+    print(username in str(row))
+    if username ==  row[0][0]:    # if username is already exist, update the waterspeed value
+        sql_cmd = f"""
+            UPDATE WaterSpeed
+                SET waterspeed={waterspeed}, time = CURRENT_TIMESTAMP
+            WHERE username="{username}"
+            """
+        compiled_sql_cmd = text(sql_cmd)
+
+        with engine.connect() as conn:
+            conn.execute(compiled_sql_cmd)
+            conn.commit()
+
+        update_data_successful_message = {
+        'status': 'success',
+        'code': 200,
+        'message': 'Update new data successful'
+        }
+        
+        update_data_successful_message_json_string = json.dumps(update_data_successful_message, indent=4)
+        
+        return update_data_successful_message_json_string
+
+    else:
+        # insert the new row of data
+        sql_cmd = f""" 
+                INSERT INTO WaterSpeed
+                VALUES ("{username}", {waterspeed}, CURRENT_TIMESTAMP)
+            """        
+
+        compiled_sql_cmd = text(sql_cmd)
+
+        with engine.connect() as conn:
+            conn.execute(compiled_sql_cmd)
+            conn.commit()
+
+        insert_data_successful_message = {
+        'status': 'success',
+        'code': 200,
+        'message': 'Insert new data successful'
+        }
+        
+        insert_data_successful_message_json_string = json.dumps(insert_data_successful_message, indent=4)
+        
+        return insert_data_successful_message_json_string
 
 # get all the data with specific user
 @app.route('/read_all_data_from_db', methods=['POST'])
